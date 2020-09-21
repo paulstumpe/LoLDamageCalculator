@@ -60,7 +60,6 @@ function ComboSegment ({props}){
                 return total;
             }
         }, 0);
-        try{
             let newReducer = theEndAllBeAllDamageCalculatorAndReducer(enemyChampion, 
                 [], //enemy items 
                 {}, //enemy runes 
@@ -71,11 +70,8 @@ function ComboSegment ({props}){
                 enemyCurrentHP,
                 selectedAbilities);
             console.log(newReducer);
+        damageWithCurrentItems=newReducer;
 
-        }
-        catch{
-            console.log('failed endallbeall')
-        }
     }
     let damageWithOptimalItems = 100;
     const onChange = function (clickedAbilityIndex){

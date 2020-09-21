@@ -41,7 +41,7 @@ class Ratio {
 class Ability {
     constructor(name, cost, costType, coolDown, description,
                 leveling, skill, damageType, isProjectile, flatDamage, ratios, castTime, icon,
-                icons, levelings, descriptions) {
+                icons, levelings, descriptions, damageEffects) {
         this.name = name;
         this.cost = cost;
         this.costType = costType;
@@ -59,6 +59,7 @@ class Ability {
         this.icons = icons;
         this.levelings = levelings;
         this.descriptions = descriptions;
+        this.damageEffects = damageEffects;
     }
 
     static makeFromWikiData(obj) {
@@ -80,49 +81,14 @@ class Ability {
         if(v.leveling) leveling = v.leveling;
         let ratios = [];
         let flatDamage = [];
+        let damageEffects = [];
         if(!leveling) {
             // console.error("leveling null ? ", v);
             console.error("leveling null ? ");
         } else {
+            damageEffects = formatter.fuckingLevelDescription(leveling);
             let numberRgx = /\d+\.?\d*/g;
-
-
             // extract leveling data
-            // let s = "Physical Damage:»50 / 90 / 130 / 170 / 210 (+ 130 / 140 / 150 / 160 / 170% AD)";
-            // let numberRgx = /\d+\.?\d*/g;
-            // let ratioRegex = /\([^\)]+\)/g;
-            // let ratioStr = null;
-            // let ratioType = null;
-            // let adReg = /ad/i;
-            // let bonusAdReg = /bonus ad/i;
-            // let apReg = /ap/i;
-            // let bonusApReg = /bonus ap/i;
-            // let armorReg = /armor/i;
-            // let bonusArmorReg = /bonus armor/i;
-            // let mrReg = /magic resistance/i;
-            // let bonusMrReg = /bonus magic resistance/i;
-            // let maxHealthReg = /maximum health/i;
-            // if(ratioRegex.test(leveling)) {
-            //     ratioStr = leveling.match(ratioRegex)[0];
-            //     if (/bonus ad/) {
-            //         ratioType = 'bonus ad';
-            //     }else if(/ad/i.test(ratioStr)) {
-            //         ratioType = 'ad';
-            //     } else if (/ap/i.test(ratioStr)) {
-            //         ratioType = 'ap';
-            //     }
-            // }
-            // ratios = [];
-            // if(ratioStr && numberRgx.test(ratioStr)) {
-            //     try {
-            //         ratios = ratioStr.match(numberRgx).map(n => new Ratio(Number.parseFloat(n), ratioType));
-            //     } catch(e) {
-            //         ratios = [];
-            //         console.error(`${e}\n\n ${ratioStr} ${leveling}`);
-            //         console.error(ratioStr.match(numberRgx), numberRgx.test(ratioStr));
-            //     }
-            //
-            // }
             ratios = formatter.makeRatioFromLevelingDescription(leveling);
             flatDamage = leveling.match(numberRgx).slice(0, 5).map(n => Number.parseFloat(n));
         }
@@ -162,7 +128,8 @@ class Ability {
             v.icon,
             icons,
             levelings,
-            descriptions
+            descriptions,
+            damageEffects
         )
     }
 }

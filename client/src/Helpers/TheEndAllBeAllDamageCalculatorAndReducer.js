@@ -16,40 +16,47 @@ const theEndAllBeAllDamageCalculatorAndReducer = (selectedEnemyData,
         //reduce abilities array
         let seed = selectedStartingHP
         let hpAfterCombo = abilitiesArray.reduce((total, currentAbility)=>{
-            let abilitiesRankArray = currentAbility.damageProc.abilityRank;
-            let abilityKey = currentAbility.skill;
-            let abilityRank = levels[abilityKey];
-            let abilityValues = abilitiesRankArray[abilityRank-1];
-            let damageFromRatio = 0;
-            if(abilityValues.ratioType==="ad"){
-                damageFromRatio= (abilityValues.ratio/100)*myChamp.ad;
-            } else if(abilityValues.ratioType==="ap"){
-                damageFromRatio= (abilityValues.ratio/100)*myChamp.ap;
-            }
-            let premitigationDamage = abilityValues.base + damageFromRatio
-            let postMitigationDamage 
-            if(currentAbility.damageProc.damageType ==="magic"){
-                if(enemyChamp.mr>=0){
-                    let reduceIncomingDamageBy = (100)/(100+enemyChamp.mr)
-                    postMitigationDamage=premitigationDamage*reduceIncomingDamageBy;
-                } else {
-
+            if(currentAbility.damageEffects && currentAbility.damageEffects[0]){
+                console.log(currentAbility.damageEffects[0])
+                let currentAbilityPart = currentAbility.damageEffects[0];
+                let abilitiesRankArray = currentAbility.damageEffects[0].abilityRanks;
+                let abilityKey = currentAbility.skill;
+                let abilityRank = levels[abilityKey];
+                let abilityValues = abilitiesRankArray[abilityRank-1];
+                let damageFromRatio = 0;
+                if(abilityValues.ratioType==="ad"){
+                    damageFromRatio= (abilityValues.ratio/100)*myChamp.ad;
+                } else if(abilityValues.ratioType==="ap"){
+                    damageFromRatio= (abilityValues.ratio/100)*myChamp.ap;
                 }
-            } else if(currentAbility.damageProc.damageType ==="physical"){
-                //check if armor is above zero
-                if(enemyChamp.armor>=0){
-                    let reduceIncomingDamageBy = (100)/(100+enemyChamp.armor)
-                    postMitigationDamage=premitigationDamage*reduceIncomingDamageBy;
-                } else {
-
+                let premitigationDamage = abilityValues.base + damageFromRatio
+                let postMitigationDamage 
+                if(currentAbilityPart.type ==="magic"){
+                    if(enemyChamp.mr>=0){
+                        let reduceIncomingDamageBy = (100)/(100+enemyChamp.mr)
+                        postMitigationDamage=premitigationDamage*reduceIncomingDamageBy;
+                    } else {
+    
+                    }
+                } else if(currentAbilityPart.type ==="physical"){
+                    //check if armor is above zero
+                    if(enemyChamp.armor>=0){
+                        let reduceIncomingDamageBy = (100)/(100+enemyChamp.armor)
+                        postMitigationDamage=premitigationDamage*reduceIncomingDamageBy;
+                    } else {
+    
+                    }
+                } else if (currentAbilityPart.type === "true") {
+                    postMitigationDamage=premitigationDamage;
                 }
-            } else if (currentAbility.damageProc.damageType === "true") {
-                postMitigationDamage=premitigationDamage;
+                return total-postMitigationDamage;
+            } else {
+                console.log(currentAbility.name, " does not have a damageEffect")
+                return 0;
             }
-            return total-postMitigationDamage;
         }, seed)
-
-        return hpAfterCombo;
+        return selectedStartingHP-hpAfterCombo;
+        // return hpAfterCombo;
 }
 
 const myChampCalculate = (selectedOwnChampData, selectedOwnItems, SelectedOwnRunes, levels)=>{
@@ -63,8 +70,36 @@ const myChampCalculate = (selectedOwnChampData, selectedOwnItems, SelectedOwnRun
 const myEnemyCalculate = (selectedEnemyData, 
     selectedEnemyItems, 
     selectedEnemyRunes, levels, selectedStartingHP)=>{
-
+        let {baseStats} = selectedEnemyData
+        let level = levels.enemyChampion;
+        let enemy = {
+             mr: 12,
+             armor : 12,
+         }
+         enemy.armor = baseStats.armor+(baseStats.armorPerLevel*(level-1))
+         enemy.mr = baseStats.spellBlock + (baseStats.spellBlockPerLevel *(level-1))
+         return enemy;
 }
+// armor: 23
+// armorPerLevel: 3.5
+// attackDamage: 62.4
+// attackDamagePerLevel: 3.3
+// attackRange: 125
+// attackSpeed: 0.625
+// attackSpeedPerLevel: 3.2
+// crit: 0
+// critPerLevel: 0
+// hp: 575
+// hpPerLevel: 95
+// hpRegen: 8
+// hpRegenPerLevel: 0.5
+// moveSpeed: 345
+// mp: 200
+// mpPerLevel: 0
+// mpRegen: 50
+// mpRegenPerLevel: 0
+// spellBlock: 37
+// spellBlockPerLevel: 1.25
 // abilityRank:[
 //     {
 //         base: 10,

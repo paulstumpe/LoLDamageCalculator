@@ -56,7 +56,13 @@ function App() {
         let champData = data;
         console.log(champData.abilities)
         setchampionAbilities(champData.abilities)
+        return Axios.get('/champion/ezreal')
       })
+      .then(
+        ({data})=>{
+          setEnemyChampion(data);
+        }
+      )
   },[])
   const fetchAndSetSelectedChampion = async ({name})=>{
     let champion = await fetchChampion(name)
