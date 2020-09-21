@@ -7,6 +7,7 @@ import AbilityTimeLineZoomed from "./AbilityTimeLineZoomed";
 import EnemyHP from "./EnemyHP";
 import axios from "axios";
 import SelectChampionAndEnemyLevels from "./SelectChampionAndEnemyLevels"
+import ChooseEnemyHPSlider from "./ChooseEnemyHPSlider"
 function ComboSegment ({props}){
     const [currentStep, setCurrentStep] = useState(0);
     const [enemy, setEnemy]= useState({
@@ -34,7 +35,7 @@ function ComboSegment ({props}){
             console.log(err)})
     }, [])
 
-    const {selectedAbilities, championAbilities, setSelectedAbilites, selectedChampion, levels, setLevels} = props;
+    const {selectedAbilities, championAbilities, setSelectedAbilites, selectedChampion, levels, setLevels, enemyChampion, setEnemyCurrentHP, enemyCurrentHP} = props;
     let damageWithCurrentItems = 0; 
     if(selectedAbilities.length!==0){
         damageWithCurrentItems= selectedAbilities.reduce((total,ability)=>{
@@ -60,12 +61,16 @@ function ComboSegment ({props}){
         <AbilityTimeLineZoomed props={{
             selectedAbilities, setSelectedAbilites, currentStep, setCurrentStep, onChange
         }}></AbilityTimeLineZoomed>
+        <ChooseEnemyHPSlider props={{
+            enemyChampion, setEnemyCurrentHP, enemyCurrentHP, levels
+        }}/>
         <EnemyHP props={{
             selectedAbilities,
-            enemy,
+            enemyChampion,
             damageWithCurrentItems,
             damageWithOptimalItems,
             levels,
+            enemyCurrentHP
         }}/>
         <AbilityTimeline props={{
             selectedAbilities, 
@@ -83,7 +88,7 @@ function ComboSegment ({props}){
             levels,
             setLevels
             }}/>
-        <SelectChampionAndEnemyLevels props={{selectedChampion, enemy, levels, setLevels,}} />
+        <SelectChampionAndEnemyLevels props={{selectedChampion, enemyChampion, levels, setLevels, setEnemyCurrentHP}} />
     </div>);
 }
 export default ComboSegment;

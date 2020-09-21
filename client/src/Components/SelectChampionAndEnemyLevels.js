@@ -1,8 +1,10 @@
 import React from "react";
 import { Button, Select } from "antd";
+import findHP from '../Helpers/findHP';
+
 const {Option} = Select;
 function AbilityButtons ({props}){
-    const {selectedChampion, enemy, levels, setLevels} = props
+    const {selectedChampion, enemyChampion, levels, setLevels, setEnemyCurrentHP} = props
     let arr = []
     for(let i= 0; i<18; i++){
         arr.push(i+1);
@@ -12,6 +14,7 @@ function AbilityButtons ({props}){
         let newLevels = {...levels}
         newLevels.enemyChampion=level;
         setLevels(newLevels)
+        setEnemyCurrentHP(findHP(enemyChampion, newLevels));
     }
     const handleChampionChange=(level)=>{
         let newLevels = {...levels}
@@ -19,7 +22,7 @@ function AbilityButtons ({props}){
         setLevels(newLevels)
     }
     return(<div>
-        <div>Enemy {enemy.name} Levels:
+        <div>Enemy {enemyChampion.name} Levels:
         <Select defaultValue={levels.enemyChampion} onChange={handleEnemyChange}>
             {arr.map((e,num)=>{
                 console.log('inside map')

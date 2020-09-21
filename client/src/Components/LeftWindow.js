@@ -1,14 +1,19 @@
 import Axios from "axios";
 import React, { useState, useEffect } from "react";
-import AatroxSplash from "../data/champion-splash-tiles/Aatrox_Splash_Tile_0.jpg";
-import ChampSplashs from "../data/champion-splash-tiles/championImages";
-const { AutoComplete, Avatar } = require("antd");
+// import AatroxSplash from "../data/champion-splash-tiles/Aatrox_Splash_Tile_0.jpg";
+// import ChampSplashs from "../data/champion-splash-tiles/championImages";
+const { AutoComplete, Avatar, Switch } = require("antd");
+
+
+
+
 
 function LeftWindow ({props}){
     const [value, setValue] = useState('')
     const [options, setOptions] = useState([]);
     const [championNames, setChampNames] = useState([])
-    const {selectedChampion, fetchAndSetSelectedChampion} = props;
+    const [choosingEnemyToggle, setChoosingEnemyToggle] = useState(false);
+    const {selectedChampion, fetchAndSetSelectedChampion, fetchAndSetEnemyChampion} = props;
 
 
     useEffect(()=>{
@@ -24,9 +29,12 @@ function LeftWindow ({props}){
             console.log("champlist",newOptions, "data", data)
         }).catch(()=>{console.log('error on axios get')})
     },[]);
-    
    const onAutoCompleteSelectChampion = data=>{
-    fetchAndSetSelectedChampion({name:data})
+        if(choosingEnemyToggle){
+            fetchAndSetEnemyChampion({name:data})        
+        } else {
+            fetchAndSetSelectedChampion({name:data})
+        }
        let newOptions = championNames.map(champion=>{
             const {name, image}= champion
             return {label: name, value: name, image};
@@ -45,10 +53,21 @@ function LeftWindow ({props}){
     };
     const onChampClick=(championName)=>{
         //todo make axios call for specific champion
-        fetchAndSetSelectedChampion({name:championName})
+        if (choosingEnemyToggle){
+            fetchAndSetEnemyChampion({name:championName})
+        } else{
+            fetchAndSetSelectedChampion({name:championName})
+        }
         console.log(championName)
     }
+    const onToggleEnemyOrAlly = (change)=>{
+        setChoosingEnemyToggle(!choosingEnemyToggle)
+    }
+
     return(<div>
+        <span>Choosing for Enemy </span>
+        <Switch defaultChecked={choosingEnemyToggle} onChange={onToggleEnemyOrAlly}/>
+
         <div>Search Champion:</div>
         <AutoComplete
         onChange={onAutoCompleteChampionChange}

@@ -1,39 +1,48 @@
-import { Progress } from "antd";
+import { Progress, Avatar } from "antd";
 import React from "react";
 import findHP from "../Helpers/findHP";
 function EnemyHP ({props}){
     const {selectedAbilities,
-        enemy,
+        enemyChampion,
         damageWithCurrentItems,
         damageWithOptimalItems, 
-        levels} = props;
+        levels,
+        enemyCurrentHP
+    } = props;
     const hpToPercent = (hp, outofHP)=>{
         console.log(hp/outofHP*100);
         return hp/outofHP*100
     }
-
+    const maxHP = findHP(enemyChampion, levels)
     //todo add css tooltip hover
     return(<div style={{paddingRight: "60px"}}>
         Combo Damage
-<div>{enemy.name} LVL:{levels.enemyChampion}</div>
+<div>{enemyChampion.name} LVL:{levels.enemyChampion}
+<Avatar
+                    size="large"
+                    shape='square'
+                    src={enemyChampion.image.smallSquareSprite}
+
+                >{enemyChampion.name}</Avatar>
+</div>
        <Progress
        strokeLinecap="square"
        strokeColor="lightGreen"
-       percent={hpToPercent(enemy.currentHP, enemy.maxHP)}
+       percent={hpToPercent(enemyCurrentHP, maxHP)}
        trailColor="Black" 
        format={(percent, succesPercent)=>{
            console.log('ran formatting')
-           return damageWithCurrentItems +"/" + findHP(enemy, levels) +" HP"
+           return enemyCurrentHP-damageWithCurrentItems +"/" + findHP(enemyChampion, levels) +" HP"
        }}
        success={{ 
-           percent: hpToPercent(damageWithCurrentItems,enemy.maxHP),
+           percent: hpToPercent(damageWithCurrentItems, maxHP),
            strokeColor: "Red" 
         }}
        ></Progress>
        <div style={{fontSize:"10px"}}>
             <span style={{color:"Red"}}>Current Combo Damage : {damageWithCurrentItems} </span>
-            <span style={{color:"green"}}>Current HP : {enemy.currentHP} </span>
-            <span style={{color:"black"}}>Enemy Max HP : {enemy.maxHP}</span>
+            <span style={{color:"green"}}>Current HP : {enemyCurrentHP} </span>
+            <span style={{color:"black"}}>enemy Max HP : {maxHP}</span>
        </div>
         Combo Damage With Optimal Items
         <Progress

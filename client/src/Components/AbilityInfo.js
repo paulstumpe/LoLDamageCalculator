@@ -1,6 +1,6 @@
 import { Card } from "antd";
 import React from "react";
-import championsImages from '../data/champion-splash-tiles/championImages';
+// import championsImages from '../data/champion-splash-tiles/championImages';
 
 function AbilityInfo ({props}){
     const {selectedChampion, levels} = props;
