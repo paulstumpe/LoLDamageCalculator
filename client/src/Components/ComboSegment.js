@@ -8,6 +8,7 @@ import EnemyHP from "./EnemyHP";
 import axios from "axios";
 import SelectChampionAndEnemyLevels from "./SelectChampionAndEnemyLevels"
 import ChooseEnemyHPSlider from "./ChooseEnemyHPSlider"
+import theEndAllBeAllDamageCalculatorAndReducer from "../Helpers/TheEndAllBeAllDamageCalculatorAndReducer";
 function ComboSegment ({props}){
     const [currentStep, setCurrentStep] = useState(0);
     const [enemy, setEnemy]= useState({
@@ -35,10 +36,19 @@ function ComboSegment ({props}){
             console.log(err)})
     }, [])
 
-    const {selectedAbilities, championAbilities, setSelectedAbilites, selectedChampion, levels, setLevels, enemyChampion, setEnemyCurrentHP, enemyCurrentHP} = props;
+    const {selectedAbilities, 
+        championAbilities, 
+        setSelectedAbilites, 
+        selectedChampion, 
+        levels, 
+        setLevels, 
+        enemyChampion, 
+        setEnemyCurrentHP, 
+        enemyCurrentHP} = props;
     let damageWithCurrentItems = 0; 
     if(selectedAbilities.length!==0){
         damageWithCurrentItems= selectedAbilities.reduce((total,ability)=>{
+            console.log('ability', ability)
             if (ability.skill !== "I"){
                 let abilityRank=levels[ability.skill]
                 if (abilityRank> 0){
@@ -50,6 +60,22 @@ function ComboSegment ({props}){
                 return total;
             }
         }, 0);
+        try{
+            let newReducer = theEndAllBeAllDamageCalculatorAndReducer(enemyChampion, 
+                [], //enemy items 
+                {}, //enemy runes 
+                selectedChampion, 
+                [], //ally items, 
+                {}, //ally runes 
+                levels,
+                enemyCurrentHP,
+                selectedAbilities);
+            console.log(newReducer);
+
+        }
+        catch{
+            console.log('failed endallbeall')
+        }
     }
     let damageWithOptimalItems = 100;
     const onChange = function (clickedAbilityIndex){
